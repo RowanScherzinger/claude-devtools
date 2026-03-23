@@ -8,6 +8,23 @@ dist-standalone/
 out/
 release/
 coverage/
+portable/
+build/
+*.exe
+*.dmg
+*.AppImage
+*.deb
+*.rpm
+*.snap
+*.pkg
+*.msi
+*.zip
+*.tar.gz
+*.tar.bz2
+*.nsis
+*.blockmap
+builder-debug.yml
+builder-effective-config.yaml
 
 # IDE
 .vscode/

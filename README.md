@@ -206,6 +206,56 @@ Every tool call is paired with its result in an expandable card. Specialized vie
 
 ---
 
+## Terminal UI (TUI)
+
+Monitor Claude Code sessions directly from your terminal — no Electron, no browser.
+
+```bash
+pnpm tui
+```
+
+A full-screen interactive interface with three panes:
+
+```
+┌─ Projects ───────────┬─ Sessions ──────────────────┬─ Log ──────────────────────────────┐
+│  ▸ my-project    12  │  ● 03/23 14:32  live        │ [14:32:01] USER: implement thing   │
+│  ▸ other-proj     3  │    implement thing           │ [14:32:03] AI (sonnet, 3.2s, 840)  │
+│                      │  ○ 03/23 09:11               │    ├─ Read                         │
+│                      │    refactor the api          │    ├─ Edit                         │
+│                      │                              │    └─ Done.                        │
+└──────────────────────┴─────────────────────────────┴────────────────────────────────────┘
+[Tab] pane  [↑↓] nav  [Enter] select  [q] quit
+```
+
+**Keyboard controls:** `Tab` cycles between panes, `↑↓` navigates lists, `Enter` selects, `PageUp`/`PageDown` scrolls the log, `q` quits.
+
+Sessions actively being written to are marked `live` with a green `●`. The log panel updates in real time as Claude Code runs.
+
+**Override the Claude root path:**
+
+```bash
+pnpm tui -- --claude-root=/path/to/.claude
+```
+
+**Customize the theme:**
+
+All TUI colors, indicator characters, and panel widths are defined in one file: `src/tui/theme.ts`. Edit the values there to restyle every panel at once — no need to hunt through component code.
+
+```ts
+// src/tui/theme.ts (excerpt)
+colors: {
+  focusedBorder: 'cyan',   // border color when a pane is focused
+  cursor: 'cyan',          // cursor-row highlight
+  userLabel: 'blue',       // USER: timestamp in the log
+  aiLabel: 'green',        // AI: timestamp in the log
+  ...
+}
+```
+
+The TUI runs as a plain Node.js process (no Electron required) and reuses the same parsing pipeline as the desktop app.
+
+---
+
 ## Docker / Standalone Deployment
 
 Run claude-devtools without Electron — in Docker, on a remote server, or anywhere Node.js runs.
@@ -299,6 +349,7 @@ pnpm dist            # macOS + Windows + Linux
 | Command | Description |
 |---------|-------------|
 | `pnpm dev` | Development with hot reload |
+| `pnpm tui` | Launch terminal UI monitor |
 | `pnpm build` | Production build |
 | `pnpm typecheck` | TypeScript type checking |
 | `pnpm lint:fix` | Lint and auto-fix |

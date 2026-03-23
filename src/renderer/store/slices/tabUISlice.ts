@@ -42,6 +42,9 @@ export interface TabUIState {
 
   /** Saved scroll position for restoring when switching back to this tab */
   savedScrollTop?: number;
+
+  /** Whether this tab is displaying the terminal (monospace) view instead of the rich view */
+  terminalMode: boolean;
 }
 
 /**
@@ -55,6 +58,7 @@ function createDefaultTabUIState(): TabUIState {
     showContextPanel: false,
     selectedContextPhase: null,
     savedScrollTop: undefined,
+    terminalMode: false,
   };
 }
 
@@ -111,6 +115,10 @@ export interface TabUISlice {
   saveScrollPositionForTab: (tabId: string, scrollTop: number) => void;
   /** Get saved scroll position for a specific tab */
   getScrollPositionForTab: (tabId: string) => number | undefined;
+
+  // Terminal mode (per-tab)
+  /** Toggle terminal view mode for a specific tab */
+  toggleTerminalModeForTab: (tabId: string) => void;
 }
 
 // =============================================================================
@@ -315,5 +323,18 @@ export const createTabUISlice: StateCreator<AppState, [], [], TabUISlice> = (set
   getScrollPositionForTab: (tabId: string) => {
     const tabState = get().tabUIStates.get(tabId);
     return tabState?.savedScrollTop;
+  },
+
+  // ==========================================================================
+  // Terminal Mode
+  // ==========================================================================
+
+  toggleTerminalModeForTab: (tabId: string) => {
+    const state = get();
+    const newMap = new Map(state.tabUIStates);
+    const tabState = newMap.get(tabId) ?? createDefaultTabUIState();
+
+    newMap.set(tabId, { ...tabState, terminalMode: !tabState.terminalMode });
+    set({ tabUIStates: newMap });
   },
 });

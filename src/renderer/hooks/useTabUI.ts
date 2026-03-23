@@ -48,6 +48,8 @@ interface UseTabUIReturn {
   savedScrollTop: number | undefined;
   saveScrollPosition: (scrollTop: number) => void;
   initializeTabUI: () => void;
+  isTerminalMode: boolean;
+  toggleTerminalMode: () => void;
 }
 
 // =============================================================================
@@ -85,6 +87,7 @@ export function useTabUI(): UseTabUIReturn {
     setSelectedContextPhaseForTab,
     saveScrollPositionForTab,
     initTabUIState,
+    toggleTerminalModeForTab,
   } = useStore(
     useShallow((s) => ({
       toggleAIGroupExpansionForTab: s.toggleAIGroupExpansionForTab,
@@ -97,6 +100,7 @@ export function useTabUI(): UseTabUIReturn {
       setSelectedContextPhaseForTab: s.setSelectedContextPhaseForTab,
       saveScrollPositionForTab: s.saveScrollPositionForTab,
       initTabUIState: s.initTabUIState,
+      toggleTerminalModeForTab: s.toggleTerminalModeForTab,
     }))
   );
 
@@ -215,6 +219,14 @@ export function useTabUI(): UseTabUIReturn {
     initTabUIState(tabId);
   }, [tabId, initTabUIState]);
 
+  // Terminal mode - derive from tabState
+  const isTerminalMode = tabState?.terminalMode ?? false;
+
+  const toggleTerminalMode = useCallback((): void => {
+    if (!tabId) return;
+    toggleTerminalModeForTab(tabId);
+  }, [tabId, toggleTerminalModeForTab]);
+
   return {
     // Current tab ID
     tabId,
@@ -248,5 +260,9 @@ export function useTabUI(): UseTabUIReturn {
 
     // Initialization
     initializeTabUI,
+
+    // Terminal mode
+    isTerminalMode,
+    toggleTerminalMode,
   };
 }
